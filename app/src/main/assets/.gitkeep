@@ -1,0 +1,3 @@
+# This file ensures the assets directory exists
+# Model files (efficientdet_lite0.tflite and labels.txt) should be placed here
+

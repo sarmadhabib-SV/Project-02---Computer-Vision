@@ -1,0 +1,218 @@
+Project 2: Mobile Imaging Research
+                            DUE DATES , Evaluation Guidelines 
+ 
+You are to write a GUI Java/Kotlin application that run on the Android platform and can run under an Android Emmulator using Android Java IDE and Tensorflow API that features some Computer Vision Application. Your Application MUST BE APPROVED by the instructor and should be of significant complication to be interesting and have some barrier of entrance (meaning would take at the least a computer vision scientist to implement it). You are going to propose a Mobile Imaging Application that in some way will ASSIST One of the following groups:
+	•	a blind or low-vision (not completely blind) person
+	•	senior citizen
+	•	someone with reduce physical mobility
+	•	an animal
+	•	children
+	•	athletes
+	•	illness situation awareness communities
+ 
+YOU will be assigned to a group that will be in one of these designated areas --- if you choose an animal you must have access to this kind of animal for testing (e.g. if this is for dogs, you must have a dog). It has to be a real project solving some kind of real problem. It is considered Assistive Technology
+ 
+this will involve self learning of Android Programming ---you have my Mobile Programming website to help you with general concepts. BUT MOST OF THE MATERIAL YOU WILL BE LEARNING from the Android developer website directly o your own. and we will have some discussions in class.
+ 
+ 
+IMPORTANT REQUIREMENT:
+You MUST use in your application the Google TensorFlow API (and also read here and here) OR Pytorch and use some kind of Deep Learning Network (CNN, LSTM, etc) to implement your recognition layer and this requires Asynchronous calling.Note: for this project you are NOT allowed to use a pre-existing trained Deep Learning Network for your main network (or course you can retrain one with your dataset and your classes suited to your problem ) . See extra credit options inlcuding fine-tuning Gemini below.
+*********************************************************************
+you can do both or only one or none of the following extra credit options  EXTRA CREDIT A- you will get 30 extra points if you fine-tune more than one model. Note this can inlcude fine-tuning a Gemini model. This must make sense in your system...discuss with instructor.
+EXTRA CREDIT B- you will get 10 extra points if you some how additionally make use Google Cloud Vision or Google Vertex API but, not to replace the main Deep Learning Network you are required to use in your application.
+EXTRA CREDIT C- you will get 30 extra points if additional Hardware sensor like a IR camera attached to device (see instructor for approval)
+EXTRA CREDIT D- you will get 15 extra points if you train on the Cloud (not colab) AND create documents on how to train on cloud and share and discuss with class PRIOR to due date of project --so that others can replicate this for their projects
+
+
+Project 2: Mobile Imaging Research
+You are going to propose a Mobile Imaging Application that in some way will ASSIST One of the following groups:
+	•	a blind or low-vision (not completely blind) person
+	•	senior citizen
+	•	someone with reduce physical mobility
+	•	an animal
+	•	children
+	•	athletes/health
+ 
+ 
+Example: Consider the case of a blind person ---. It is up to you to think of this application (i.e. an app that tells you what is the salt and what is the pepper shaker).
+Think out of the box --but, make it doable (this is hard).....even if you solve the problem paritally I may be happy ---talk to me.
+	•	salt and peper shaker recognition or how about in coffee shop --cream versus milk, sugar versus substitute?
+	•	country road walking --- follow the white line on side of road
+	•	city road walking ---stay on sidewalk
+	•	Help! Get me out of Here App ---- and entrance or door finding in a room app --- tell user straight ahead to left or right of scene.
+paper on door++ detection
+ 
+	•	label reading in a grocery store -- even the start of this ---recognizing OCR characters and then (someone else could use text to speech to read them out).
+	•	what about a low vision person ---what could you do to help them out ?
+	•	Traffic Light Crossing App --- here a low vision or blind person comes to intersection without the crossing audio beeps/sound to say it is safe to cross. User can point up camera to intersection and using video stream your app will find the traffic light and tell user to hold phone still and then wait for NEXT green light and tell user to walk. (next green light so not telling user to walk at end of a green light)
+
+ 
+
+Application Specifications
+Every proposal will most likely propose a different mobile imaging application. You will submit a proposal that will be approved or the instuctor will make suitable suggestions for improvement (simplication or possibly more capabilities will be required). Because the purpose of the application can widly varry I am only making some general requirements as listed below.
+	•	Specify percisely which group (see above) you intend to assist and how --give an example scenario(s).
+	•	You must as part of the program take pictures (one or more) using the phone's camera either automatically or with the assistance of the user.
+	•	You need to have some kind of visual response (even if temporarily) showing the photo(s) taken.
+	•	You need to have some kind of visual reponse showing results of your application ( examples not for you to necessarily replicate- web search listing response for product that has the bar code took picture of, could be a movie/slideshow showing pieced together images taken, could be some image processing results, could be some kind of upload feature, could be some kind of security pass, etc).
+	•	(part of proposal and final project turn in ) You will need to define buisness model in terms of audience (demographics-age, income, location\,tc) and projected cost of application
+	•	There must be a recognition layer that involves some kind of Deep Learning Network (i.e. CNN or LSTM, etc).
+	•	(part of proposal and final project turn in) You will need to define use case diagram and description of your system. This needs to include prototypes of interface as would be seen and experienced by user along with hypothetical results.  
+Research:
+1) Ideas - come up with one or at most two ideas that you might like to implement (e.g. iris detector on a mobile device).
+2) 5 papers - for the idea(s) you came up with in #1, find a minimum of 5 papers you are going to post to the Blackboard Discussion board for Project 3 Research Postings.
+3) pick 5 papers posted by someone else and review them and give your opinion of what is going on.
+ 
+Proposal:
+before beginning this option/project you must submit and proposal which must include the following sections
+	•	Concept Summary - a few paragraphs on purpose of Android Imaging Application
+	•	Audience - demographics of intended audience.
+	•	Application Cost and Projected success - tell me what you will charge for this application (99 cents or 4.99 or what?) and why it will be successful for your audience---why are they going to buy it.
+	•	Interface Mockups - drawings (hand drawing is okay if readable) of interfaces seen by user as they use the application --- you should have more than one as the application must do something
+	•	Use Case - Diagram and Description of use of application
+	•	References - any (ideally online or electronic you can attach) references you used.
+	•	Image Processing Routines - brief description of what kinds of image processing /algorithms you will do on the one or more images your application will take (possibly with assistance of user). Note that you can not simply display the image taken or say even one that has a single image processing routine done on it (unless you can convince me of some powerful business use for it that does not currently exist)---this is way too trivial of an application. You need to think about the business part and try to come up with an idea that you think will sell. YOU MUST specify what the Deep Learning Network will do in your recognition layer --what are the inputs and outputs.
+Implementation
+Make sure you choose a later (4.0 or on) Android SDK so that you can capter the latest new features. Note later versions of Android SDK and emulator do not let you capture your laptops camera picture for testing in emulation mode!!!!
+	•	
+ 
+ 
+RANDOM Thoughts......
+	•	What about Seizure detection/prediction by facial monitoring??? (data?) [health]
+	•	What about towards the AI companion for the elderly/dogs --detecting boredom and offering games/interaction [seniors/animals]
+	•	What about detecting boredom in children while learning --and offering something new? [kids]
+	•	How to help a dog communicate with owners their emiotions? [animals]
+	•	Detecting obstacles for dogs with low vision and tell them what it is (how?) [animals]
+	•	Some kind of elaborate - find my X app using computer vision for the elderly who forget where something is --you monitor where they put [blind]
+	•	Pain Detection and classification (data???) [health]
+	•	Disabled expressing emotions/ exercising whatever (facial / body emotion detection) [health] 
+	•	XXXX Prevention (like fighting or picking nose or whatever) -teaching children how to behave (train with internet images) Detecting fights on the playground -big brother is watching you.
+	•	See this paper ------Who Let The Dogs Out? Modeling Dog Behavior From Visual Data ----can we use this encoder/decoder idea to see what children would do in a visual enviornment for X (gaming/learning/sports) to then autogenerate sequences/ new paths to take for a different child or ???
+	•	RESERVED (ask me about this project--I am looking for a new master's thesis around this issue): Project into Paster's thesis - Rover: training by collecting data from mobile phone mounted on guide dog's back following what it does to help its owner navigate. Label X second/ X consequitive frames of video as directional movement (Forward, Back, Left, Right, Left-Forward, Left-Back, Right-Forward, Right-Back) and then train a LSTM or CNN???? Then direct a remote car/vehicle with mounted mobile phone to head in whatever direction given incomming video. Question: Is there anyway an encoder-decoder model could be useful where the output is the next (x) frame of image synthesized and then use traditional motion estimation to tell the rover what direction to travel. Question: how do we get someone to let us collect data ---we would need hours of data and most importantly in many different enviornments. See motivation --- K. Ehsani, H. Bagherinezhad, J. Redmon, R. Mottaghi, A. Farhadi, "Who let the dogs out? Modeling dog behavior from visual data", IEEE Conference on Computer Vision and Pattern Recognition, 2018. https://pjreddie.com/media/files/papers/1803.10827.pdf
+
+Project 2: Mobile Imaging Research
+Data Input and System Specifications -- The Sensor and System
+	•	Android Phone or Tablet
+	•	Will use simulator
+	•	Android Studio with Android SDK , Java Programming language
+ 
+
+
+Project 2: Mobile Imaging Research
+Research
+	•	you will need to do research related to the application. For example the recognition of salt and peper shakers --- look into different techniques to do recogntion. Look at different samples of salt and peper shakers (symbols P,S --colors of material or ???)
+	•	you will need to break down your application into segments.
+
+Project 2: Mobile Imaging Research
+Here is a rough outline of what you should do
+ 
+Research
+	•	read up on Android (use CS4521 page)
+	•	related to your application look for computer vision literature
+Proposal
+ 
+Implementation, Testing and Documentation
+	•	implement and test and document at the same time.
+
+Project 2: Mobile Imaging Research
+Proposal
+ 
+	•	Write a proposal that covers the following:
+	•	Development Platform and Target Android SDK and device
+	•	Goals of Application --- be very specific --- show me some potential input images (take them with your camera) and draw up (by hand or with gimp/photoshop) the results.
+	•	Algorithms - in words and as much as possible in pseudo code give VERY DETAILED algorithms to solve these problems
+	•	specific to goals above 
+	•	GUI interface of program
+	•	including input and output results to user.
+Project 2: Mobile Imaging Research
+Impelmentation Requirements and Data Output
+ 
+	•	GUI -
+	•	must have user friendly easy to use interface
+	•	must have way user can turn off system and turn back on
+	•	must have way for system to respond with results
+	•	Testing and Measurement -
+	•	you must setup a series of tests (could save to video or live) to test cases
+	•	Problems
+	•	What are the problems you are encountering ---
+	•	Does system respond differently in different environments (indoor, outdoor, low lighting, bright lighting, focus issues, etc)
+Deliverables (see top for due dates)
+ 
+     1) See PROJECT DETAILS for requirements   
+  
+     2) Research/class discussion - POST on canvas->Discussions >Project 2 - Research Postings
+	•	Post a minimum of 3 articles related to your topic (MUST be good quality articles with Detailed algorithms and results
+	•	For each article you must provide:
+	•	Author and Title of paper
+	•	URL to online version of paper
+	•	Synopsis: 2-3 paragraphs telling what this paper is about
+	•	Use: 1-2 paragraphs about how you might use this research or parts of it in your Project 2.
+ 
+      3) Weekly Progress Reports (due 11pm Friday each week starting week 9) -WITH GitHub Issues Board
+Each week posting worth 5 points towards participation points in class grade
+	•	FIRST: You must create TWO Github remote repositories.
+	•	FIRST REPOSITORY will be to host your colab/training code and will have wiki, etc pointing to hosts data on Google Drive (make it read acceisbile by anyone with csueb account), and results of training.
+	•	SECOND REPOSITORY will be the github respository for your Android code. . Go to deverloper.android.com to learn how to do this or look up some youtube videos. If Git is new to you and you can also check out this site that contains a lecture on what Git is. FInally set up a remote repository that your group members and ME are members of.
+you are to create a GitHub Issues Board for issue tracking / project tracking for Project 2.
+	•	SECOND:Create Issues Boards for BOTH the "Training" GitHub repository AND the Android Code GitHub repository where reate cards/issues for each task you foresee doing for your project. 
+	•	Note each "card" represents a task or objective. As you go along you will create new tasks. Each task can be assigned to 1 or more people. Each task must have a due date. Also, each task can have some descriptions associated with it. You move tasks from Milestones (not yet started) to In Progress and then eventually to Completed
+	•	WEEKLY: Create a Progress report you post to following Discussion board each week by 11pm Friday containing (keep the titles)
+	•	Progress Summary: a quick summary as to what you did that week
+	•	GitHub Issues Boards (2 of them - one for training, one for android) and give for EACH Screen shots illustrating changes reflected work done.
+Canvas ->Assignments-> Project 2 Progress Reports - week X (x= 9, 10, etc)
+Resources for GitHub Project + Issue Boards:
+	•	Issues (you can create from issues tab or from a project), Note Issues can not have due dates but, the Milestones they belong to can.
+	•	GitHub Projects (you can have 1 or more projects associated with a repository) - how to create
+	•	GitHub Milestones (groupings of issues )
+
+   3) Project Proposal -
+Turn in Project 2 Proposal as a pdf document at Canvas->Discussions Board->Project 2 Proposal  BE AS TECHNICAL AS YOU CAN ALSO post this document on a wiki in a shared Github repository your group is to create. Keep the following section names in this Proposal.
+ 
+  Section 1: GOAL STATEMENT   Start of with describing the problem to me-- Like Reading Label on Flat Box Packages for low vision people
+ 
+Section 1.1 INPUT show some typical input images (video) for the system.  Tell me what conditions will it operate under / what are the constraints:  good lighting, package flat and within +/- 10 degrees facing flat to camera, box not rotated more than +/-10 degrees, reading text with high contrast to background either  dark text on lighter/white background  or light text on dark background (show image exmaples) ,  etc.....
+Section 1.2 OUTPUT  tell me the output is : say in large font text of the label that user can scroll through it to read, OR output text to speech.
+ 
+ 
+
+  Section 2: Development Platform and Target AVD and Device you will test it on. 
+ 
+example, will target API 19, Android 4.4.2, using OpenCV version 2.4.10 in AndroidStudio and will test on Samsung Galaxy XXXX
+ 
+  
+  Section 3: ALGORITHMS:   discuss any alogrithms and the references you used to understand them and any source from OpenCV or other parties you might use
+>>>>> Here is a partial example (I have not written enough but, you get the idea of the content. You will have Section 3.1 Overview and then you will have sections 3.2-3.* depending on how many components/ steps are in your proposed system)
+ Section 3.1: OVERVIEW:  I will have the following system components:  Label Area Finding,  OCR in each Label Area,  Output Results to User.  The main addition I am coming up with as added value is the Label Area Finding and the OCR will be done using already existing code.  Ofcourse the integration into an app is also important.
+example Section 3.2: Label Area Finding:    I am going to take a picture of the box and find potential Label Areas.   I am going to do this using the following unique idea that I came up with:
+Do Color Blob Detection using XYZ algorithm see https://github.com/Itseez/opencv/tree/master/samples/android/color-blob-detection for reference
+Then I am going to select the top 5 colors present based on their area (histogram).  I will have to decide how "close enough in color to each of the 5 colors a pixel can be to be counted in the area for that color".  This will be done experimentally. 
+For each of the 5 top colors, I will create a Label Area (subimage of the original image) I am going to then create a sub-image that is ideally smaller than the entire original image such that it is the rectangle to encompass all of the pixels of that color.
+I am going to pass the 5 top Label Areas for processing to Section 3.3
+After looking at the results for typical input images, I may adjust and choose a smaller or larger number than 5 (this will be a parameter setting in my app called Detect_Number_Label_Areas)
+example Secton 3.3:  OCR in a Label Area:  For each Label area found from previous component, I perform OCR.  This is done using the TEsseract OCR Engine (maintained by Google),  see http://gaut.am/making-an-ocr-android-app-using-tesseract/ and https://github.com/rmtheis/android-ocr  and https://play.google.com/store/apps/details?id=edu.sfsu.cs.orange.ocr&hl=en  
+example Section 3.4:  Reporting Results:  I will present the user with both a blown up text version of the label in black text on white background and text to speech.  The first part is using standard android GUI elements of a TextView contained in a ScrollView.   The second part, text to speech, will be done using standard Android TextToSpeech class see http://developer.android.com/reference/android/speech/tts/TextToSpeech.html
+    
+  Section 4: GUI interface       
+SHOW ALL interfaces and interactions to change interface by ---either draw by hand AND scan into your word document or use free mock interface tool   try out http://balsamiq.com/ 
+  
+   4) Project Due - Turn in to Canvas->Discussions Board->Project 2-Results
+ 1) URL to a Github repository (A) that contains all of your training code/codelabs you used and in its wiki's document have the following pages:
+	•	data = discuss showing examples of data used in training and contain links to google drive locations where full data is stored (make sure the google drive location has readme files in folder explaining data)  results = show the training graphs from tensorboard showing accuracy/loss curves as appropriate to your task
+testing = show results for 10 unique test images/videos and show the input and the results of classification/detection/etc. (as per your task)
+ 
+ 
+2) URL to the Github repository (B) containing all of your code for the Android application  3) URL to your Github (B) Wiki containing a page called DOCUMENTATION that documents the application working as follows (keep section names):
+DOCUMENTATION sample fround here for template you MUST use) that details the following:
+	•	Section 1 Execution Instructions: Instructions for me to download and run your code. YOU NEED to show me screen shots of you doing this from your uploaded canvas code.....this forces you to make sure that I can run your code. You MUST have the following screenshots AND give description on what to do: screenshot 1.1 = screen shot of your files uploaded to Project 1 turn in folder on canvas
+FIGURE HERE screenshot 1.2 = directory view of "temp" directory you unzipped file to showing the unziped files and directory structures.   FIGURE HERE screenshot 1.3 = Android Studio running where you have opened up project file in "temp" directory.
+FIGURE HERE screenshot 1.4 = running the application - show screenshot of it running. If I must do something beyond simply hitting the "run" button, you need to give screenshots and step by step instructions.
+ 
+	•	Section 2 Code Descpription  A describing how code is structured and the state of how it works. Give a describption for each filename listed.
+
+	•	Section 3 Testing:  here you give screen shots of you running the various stages of the program as detailed here:
+section 3.1: starting application -   FIGURE HERE screenshot 3.1a= showing icon and resulting starting GUI
+ 
+section 3.2: use step 1    You will have sections showing you using different interfaces and results of the application. FIGURE HERE screenshot 3.2a = screen shot of active image in your application  FIGURE HERE screenshot 3.2b = screen shot showing the results of application running on this image(s)
+ 
+	•	Section 4 Comments Optional any comments you have regarding your code (necessary if you code is not working, you need to tell me in detail what the problem is or what is missing)
+	•	Section 5 YOUTUBE URL - URL to YouTube video: and it must go over a LIVE demonstration of the program working and describe what is working, what is not working, and how well it works (accuracy --e.g. 2/10 times, never, 9/10 times whatever)
+

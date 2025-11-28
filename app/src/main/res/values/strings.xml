@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Vision Assist</string>
+    <string name="take_picture">Capture</string>
+    <string name="select_from_gallery">Gallery</string>
+    <string name="retake_photo">Retake Photo</string>
+    <string name="play_again">Play Again</string>
+    <string name="processing">Processing...</string>
+    <string name="camera_ready">Ready to capture or select from gallery</string>
+    <string name="no_detections">No objects detected in this image.</string>
+    <string name="camera_permission_required">Camera permission is required to use this app.</string>
+</resources>
+

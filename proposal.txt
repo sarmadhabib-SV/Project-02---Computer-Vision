@@ -1,0 +1,127 @@
+CS663 – Project 02 Proposal
+Real-Time Object and Text Detection for Accessibility
+Course: CS663 – Computer Vision  Instructor: Prof. Lynne Grewe  
+Group 04:  Sarmad Habib  Muhammad Sufiyan  Anas Niaz  Jaskirat Singh
+  Date: 14 October 2025
+
+
+1. Goal Statement
+This project aims to develop a mobile accessibility system that assists low-vision or blind users by detecting obstacles, reading text, and providing concise spoken feedback.
+ The system combines on-device real-time computer vision (using TensorFlow Lite and OpenCV) with Google’s Gemini model to produce natural, structured, and spatially aware narrations.
+
+
+Figure 1: Example Input Scene – Street signs and pedestrian crossing area captured by the smartphone camera for real-time detection and text reading.
+
+
+1.1 Motivation
+Traditional object-detection systems for visually impaired users struggle to convey context - for example, “a bench on your left” vs. just “bench detected.”
+
+ By integrating Gemini (base model), this project enhances user understanding with short, meaningful narrations like “Curb ahead; bench left.”
+
+The design avoids high-latency live streaming and instead uses snapshot-based Gemini calls for efficient, privacy-friendly, and realistic performance on mobile hardware.
+
+2. System Overview
+The system consists of two complementary layers:
+
+On-Device Layer:
+Performs fast object detection (YOLO-N or PP-PicoDet) and text recognition (OCR) for immediate hazard alerts and text reading.
+
+Cloud Layer (Gemini)
+Every few seconds—or upon user request—the system sends a single image snapshot and detection summary to Gemini. Gemini returns structured JSON plus a one-line narration describing spatial relationships and nearby objects.
+
+This approach balances speed (on-device) and semantic richness (cloud).
+
+
+
+
+3. System Diagram
+
+
+Figure 2: System Architecture for Gemini-Assisted Real-Time Object and Text Narration
+
+4. Algorithms (Sidewalk-Focused, brief)
+4.1 Object Detection (on-device, 15–30 FPS)
+	•	Model: YOLO-N or PP-PicoDet → TFLite.
+	•	Classes (trimmed): person, dog, stroller, wheelchair, bike/scooter, cone, barrier, trash_can, pole/bollard, bench, tree/planter, curb, ramp, crosswalk, vehicle_on_sidewalk.
+	•	Side & distance:
+	•	side ∈ {left, center, right} via bbox center vs. image center (±15% band = center).
+	•	distance ∈ {near, mid, far} from bbox height thresholds tuned to our camera/FOV.
+	•	(Optional) In-path gating: apply a simple sidewalk/walkway mask to flag only obstacles in the walking path.
+4.2 Text Recognition (OCR)
+	•	OpenCV preprocess (grayscale → threshold/denoise → deskew) → Tesseract/ML Kit.
+	•	Keep short, navigation text only (e.g., “STOP”, “SIDEWALK CLOSED”, “DETOUR”).
+4.3 Snapshot → Gemini (prompted JSON)
+	•	Send: current JPEG + detection summary (objects + boxes + OCR).
+	•	Return (schema):
+{"objects":[{"label":"cone","side":"center","distance":"near"}],
+ "text":[{"content":"SIDEWALK CLOSED"}],
+ "narration_short":"Cone ahead; step down at right curb."}
+	•	Narration rule: ≤12 words, action-first, sidewalk-relevant.
+	•	Offline fallback: if Gemini off, app still shows overlay + speaks local prompts.
+
+
+5. Datasets 
+5.1 Primary (sidewalk domain)
+	•	Sidewalk images with curb/obstacle/crosswalk labels — used to fine-tune our detector and evaluate per-class P/R and an in-path hazard F1 (after walkway gating).
+5.2 Pretrain / generalization(Optional)
+	•	MS COCO (2017) to bootstrap common objects; (optional) BDD100K for street context before sidewalk fine-tune.
+5.3 OCR robustness (eval only)
+	•	ICDAR15 / ICDAR17-MLT / COCO-Text / Total-Text to check rotated/curved/multilingual text.
+5.4 Splits & metrics
+	•	Splits: 80/10/10 if none provided.
+	•	Metrics: detection mAP@0.5 + per-class P/R; In-Path Hazard F1; OCR F-score on nav words; latency (on-device + snapshot round-trip).
+
+
+
+
+
+
+
+
+
+
+  Option A - One dataset (works if sidewalk set is labeled):
+	•	Train: detector on the Sidewalk dataset (with labels like cone/curb/crosswalk).
+	•	OCR: use Tesseract/ML Kit as-is (no training).
+	•	Gemini: prompt only (no training).
+	•	Demo/Test: use some sidewalk images from the same set.
+  Option B — Tiny but safer (two datasets, recommended):
+	•	Train: detector on MS COCO (common objects; faster to get working).
+	•	Test/Demo: your Sidewalk images (to show it works on sidewalks).
+	•	OCR: Tesseract/ML Kit (no training).
+	•	Gemini: prompt only (no training).
+
+6. Graphical User Interface (GUI)
+The proposed mobile interface for Object and Text Assistance for Low-Vision Users focuses on simplicity, clarity, and accessibility. The design follows a snapshot-based workflow rather than continuous live video, ensuring privacy, low latency, and ease of use for low-vision participants.
+6.1 Design Philosophy
+The GUI is built with a low-vision–first approach, prioritizing large touch targets, high-contrast visuals, minimal text, and immediate voice feedback. All interactions are designed to require a single tap or voice confirmation, minimizing cognitive load and visual dependency.
+6.2 Layout and Navigation
+The app consists of two primary screens:
+(a) Capture Screen
+	•	Displays a clean camera viewfinder that mimics a live camera, guiding the user to center the sidewalk or street area.
+	•	A large “📷 Take Picture” button occupies the lower portion of the screen, allowing easy activation with minimal effort.
+	•	Once a photo is captured, the system automatically processes the image and transitions to the narration view.
+	•	Subtle voice guidance (e.g., “Camera ready. Double tap to take a picture.”) helps orient the user upon launch.
+(b) Narration Screen
+	•	Shows a concise, high-contrast line of text (≤12 words) representing the spoken narration, e.g., “Careful: ramp ahead; pedestrian crossing in 3 meters.”
+	•	The narration automatically plays using the Android Text-to-Speech API after each capture.
+	•	Includes two simple controls:
+	•	“▶︎ Play Again” – replays the spoken narration.
+	•	“↺ Retake Photo” – returns the user to the capture screen.
+	•	Below the narration, a small summary lists detected items (object label, side, and distance) using clear tag-like chips, e.g., “ramp • center • near”.
+6.3 Accessibility Features
+	•	Voice Guidance: All key actions provide spoken prompts and confirmations.
+	•	Contrast and Font Legibility: Large font size (~19 px) and black-on-white color scheme for high readability.
+	•	Minimal Controls: Only two main screens with essential actions, ensuring users are not overwhelmed.
+	•	Auto-Processing: The app begins analysis and narration immediately after photo capture, eliminating extra steps.
+6.4 Usability Alignment
+The interface aligns with the project’s academic goals by supporting accurate evaluation of:
+	•	Latency (photo capture → narration output),
+	•	Narration correctness (spatial and distance accuracy), and
+	•	System Usability Scale (SUS) scores for low-vision participants.
+Overall, the GUI provides an intuitive and accessible experience that reflects the project’s emphasis on clarity, structured narration, and low-effort interaction.
+
+Figure 3: Prototype interface for the Object and Text Assistance app.
+
+
+
