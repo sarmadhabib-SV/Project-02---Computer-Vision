@@ -109,23 +109,33 @@ public class ResultsActivity extends AppCompatActivity {
         Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(mutableBitmap);
         
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(4f);
+        Paint objectPaint = new Paint();
+        objectPaint.setStyle(Paint.Style.STROKE);
+        objectPaint.setStrokeWidth(4f);
         
         Paint textPaint = new Paint();
-        textPaint.setColor(Color.WHITE);
-        textPaint.setTextSize(32f);
-        textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setFakeBoldText(true);
+        textPaint.setStyle(Paint.Style.STROKE);
+        textPaint.setStrokeWidth(4f);
+        textPaint.setColor(Color.CYAN); // Cyan for text bounding boxes
+        
+        Paint labelPaint = new Paint();
+        labelPaint.setColor(Color.WHITE);
+        labelPaint.setTextSize(32f);
+        labelPaint.setStyle(Paint.Style.FILL);
+        labelPaint.setFakeBoldText(true);
+        
+        Paint backgroundPaint = new Paint();
+        backgroundPaint.setColor(Color.BLACK);
+        backgroundPaint.setStyle(Paint.Style.FILL);
+        backgroundPaint.setAlpha(128); // Semi-transparent background for labels
         
         try {
             JSONArray detections = new JSONArray(detectionsJson);
             for (int i = 0; i < detections.length(); i++) {
                 JSONObject detection = detections.getJSONObject(i);
                 
+                String type = detection.optString("type", "object");
                 String label = detection.getString("label");
-                float confidence = (float) detection.getDouble("confidence");
                 JSONObject bbox = detection.getJSONObject("bbox");
                 
                 int left = bbox.getInt("left");
@@ -133,26 +143,45 @@ public class ResultsActivity extends AppCompatActivity {
                 int right = bbox.getInt("right");
                 int bottom = bbox.getInt("bottom");
                 
-                String side = detection.optString("side", "center");
-                String distance = detection.optString("distance", "mid");
-                
-                // Choose color based on distance
-                if (distance.equals("near")) {
-                    paint.setColor(Color.RED);
-                } else if (distance.equals("mid")) {
-                    paint.setColor(Color.YELLOW);
-                } else {
-                    paint.setColor(Color.GREEN);
-                }
-                
-                // Draw bounding box
                 Rect rect = new Rect(left, top, right, bottom);
-                canvas.drawRect(rect, paint);
                 
-                // Draw label with confidence
-                String labelText = String.format("%s (%.0f%%) %s %s", 
-                    label, confidence * 100, side, distance);
-                canvas.drawText(labelText, left, top - 10, textPaint);
+                if ("text".equals(type)) {
+                    // Draw text bounding box in cyan
+                    canvas.drawRect(rect, textPaint);
+                    
+                    // Draw text label
+                    String labelText = "TEXT: " + label;
+                    float textWidth = labelPaint.measureText(labelText);
+                    Rect labelRect = new Rect(left, Math.max(0, top - 40), 
+                                             left + (int)textWidth + 10, top);
+                    canvas.drawRect(labelRect, backgroundPaint);
+                    canvas.drawText(labelText, left + 5, top - 10, labelPaint);
+                } else {
+                    // Object detection
+                    float confidence = (float) detection.getDouble("confidence");
+                    String side = detection.optString("side", "center");
+                    String distance = detection.optString("distance", "mid");
+                    
+                    // Choose color based on distance for objects
+                    if (distance.equals("near")) {
+                        objectPaint.setColor(Color.RED);
+                    } else if (distance.equals("mid")) {
+                        objectPaint.setColor(Color.YELLOW);
+                    } else {
+                        objectPaint.setColor(Color.GREEN);
+                    }
+                    
+                    // Draw object bounding box
+                    canvas.drawRect(rect, objectPaint);
+                    
+                    // Draw object label with confidence
+                    String labelText = String.format("%s (%.0f%%)", label, confidence * 100);
+                    float textWidth = labelPaint.measureText(labelText);
+                    Rect labelRect = new Rect(left, Math.max(0, top - 40), 
+                                             left + (int)textWidth + 10, top);
+                    canvas.drawRect(labelRect, backgroundPaint);
+                    canvas.drawText(labelText, left + 5, top - 10, labelPaint);
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

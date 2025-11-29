@@ -14,9 +14,11 @@ public class ImageProcessor {
         ObjectDetector detector = new ObjectDetector(context);
         java.util.List<Detection> detections = detector.detect(processedBitmap);
         
-        // Run OCR
+        // Run OCR - extract text with bounding boxes
         OCRProcessor ocrProcessor = new OCRProcessor(context);
         java.util.List<String> textDetections = ocrProcessor.extractText(processedBitmap);
+        java.util.List<OCRProcessor.TextDetection> textDetectionsWithBoxes = 
+            ocrProcessor.extractTextWithBoxes(processedBitmap);
         
         // Analyze spatial relationships
         SpatialAnalyzer analyzer = new SpatialAnalyzer();
@@ -29,8 +31,8 @@ public class ImageProcessor {
         // Create summary
         String summary = createSummary(analyzedDetections, textDetections);
         
-        // Convert to JSON
-        String detectionsJson = convertToJson(analyzedDetections);
+        // Convert to JSON - include both object and text detections
+        String detectionsJson = convertToJson(analyzedDetections, textDetectionsWithBoxes);
         
         return new ProcessingResult(narration, summary, detectionsJson, processedBitmap);
     }
@@ -129,12 +131,15 @@ public class ImageProcessor {
         return summary.toString();
     }
     
-    private static String convertToJson(java.util.List<Detection> detections) {
+    private static String convertToJson(java.util.List<Detection> detections, 
+                                       java.util.List<OCRProcessor.TextDetection> textDetections) {
         org.json.JSONArray jsonArray = new org.json.JSONArray();
         
+        // Add object detections
         for (Detection detection : detections) {
             try {
                 org.json.JSONObject obj = new org.json.JSONObject();
+                obj.put("type", "object");
                 obj.put("label", detection.getLabel());
                 obj.put("confidence", detection.getConfidence());
                 obj.put("side", detection.getSide());
@@ -145,6 +150,29 @@ public class ImageProcessor {
                 bbox.put("top", detection.getTop());
                 bbox.put("right", detection.getRight());
                 bbox.put("bottom", detection.getBottom());
+                obj.put("bbox", bbox);
+                
+                jsonArray.put(obj);
+            } catch (org.json.JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        // Add text detections with bounding boxes
+        for (OCRProcessor.TextDetection textDetection : textDetections) {
+            try {
+                org.json.JSONObject obj = new org.json.JSONObject();
+                obj.put("type", "text");
+                obj.put("label", textDetection.getText());
+                obj.put("confidence", 1.0); // OCR doesn't provide confidence
+                obj.put("side", "center"); // Default for text
+                obj.put("distance", "mid"); // Default for text
+                
+                org.json.JSONObject bbox = new org.json.JSONObject();
+                bbox.put("left", textDetection.getLeft());
+                bbox.put("top", textDetection.getTop());
+                bbox.put("right", textDetection.getRight());
+                bbox.put("bottom", textDetection.getBottom());
                 obj.put("bbox", bbox);
                 
                 jsonArray.put(obj);

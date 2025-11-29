@@ -313,8 +313,9 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     setProcessingState(false);
                     
-                    // Save bitmap to temporary file and pass URI
-                    Uri imageUri = saveBitmapToFile(bitmap);
+                    // Save processed bitmap to temporary file (has correct bounding box coordinates)
+                    Bitmap processedBitmap = result.getProcessedBitmap();
+                    Uri imageUri = saveBitmapToFile(processedBitmap);
                     if (imageUri != null) {
                         Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
                         intent.putExtra("imageUri", imageUri.toString());
