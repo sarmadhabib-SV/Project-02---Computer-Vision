@@ -47,3 +47,6 @@ echo "  Documentation/ - $(ls Documentation/*.md 2>/dev/null | wc -l | tr -d ' '
 echo "  Proposal/ - $(ls Proposal/* 2>/dev/null | wc -l | tr -d ' ') files"
 echo "  Training/ - $(ls Training/* 2>/dev/null | wc -l | tr -d ' ') files"
 
+
+
+

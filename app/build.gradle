@@ -2,6 +2,13 @@ plugins {
     id 'com.android.application'
 }
 
+// Load properties from local.properties file
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+
 android {
     namespace 'com.cs663.visionassist'
     compileSdk 34
@@ -14,6 +21,21 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Gemini API key - reads from local.properties or environment variable
+        // Priority: 1) local.properties, 2) environment variable, 3) empty string
+        def geminiApiKey = localProperties.getProperty("GEMINI_API_KEY") ?: 
+                          System.getenv("GEMINI_API_KEY") ?: 
+                          project.findProperty("GEMINI_API_KEY") ?: 
+                          ""
+        buildConfigField "String", "GEMINI_API_KEY", "\"${geminiApiKey}\""
+        
+        // Log status (for debugging)
+        if (geminiApiKey && !geminiApiKey.isEmpty()) {
+            println "✅ Gemini API key loaded from local.properties"
+        } else {
+            println "ℹ️  Gemini API key not configured - app will use local narration"
+        }
     }
 
     buildTypes {
@@ -28,6 +50,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 }
 
@@ -68,6 +91,9 @@ dependencies {
     
     // Google Gemini API (for extra credit)
     implementation 'com.google.ai.client.generativeai:generativeai:0.2.2'
+    
+    // OkHttp for HTTP requests (used by Gemini SDK)
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

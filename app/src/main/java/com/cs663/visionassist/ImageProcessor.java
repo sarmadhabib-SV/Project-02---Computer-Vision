@@ -23,8 +23,8 @@ public class ImageProcessor {
         java.util.List<Detection> analyzedDetections = analyzer.analyze(detections, 
             processedBitmap.getWidth(), processedBitmap.getHeight());
         
-        // Generate narration
-        String narration = NarrationGenerator.generate(analyzedDetections, textDetections);
+        // Generate narration - try Gemini first if available, fallback to local
+        String narration = generateNarration(processedBitmap, analyzedDetections, textDetections);
         
         // Create summary
         String summary = createSummary(analyzedDetections, textDetections);
@@ -33,6 +33,45 @@ public class ImageProcessor {
         String detectionsJson = convertToJson(analyzedDetections);
         
         return new ProcessingResult(narration, summary, detectionsJson, processedBitmap);
+    }
+    
+    /**
+     * Generates narration using Gemini API if available, otherwise falls back to local narration.
+     * This method handles the async Gemini call and waits for result with timeout.
+     */
+    private static String generateNarration(Bitmap bitmap, java.util.List<Detection> detections, 
+                                           java.util.List<String> textDetections) {
+        // Check if Gemini is available
+        if (GeminiHelper.isAvailable()) {
+            try {
+                // Try Gemini with timeout (10 seconds)
+                java.util.concurrent.CompletableFuture<String> geminiFuture = 
+                    GeminiHelper.generateEnhancedNarration(bitmap, detections, textDetections);
+                
+                try {
+                    // Wait for Gemini response with timeout
+                    String geminiNarration = geminiFuture.get(10, java.util.concurrent.TimeUnit.SECONDS);
+                    
+                    if (geminiNarration != null && !geminiNarration.trim().isEmpty()) {
+                        android.util.Log.d("ImageProcessor", "Using Gemini narration");
+                        return geminiNarration;
+                    }
+                } catch (java.util.concurrent.TimeoutException e) {
+                    android.util.Log.w("ImageProcessor", "Gemini API timeout, using fallback");
+                } catch (java.util.concurrent.ExecutionException e) {
+                    android.util.Log.w("ImageProcessor", "Gemini API error, using fallback: " + e.getMessage());
+                } catch (InterruptedException e) {
+                    android.util.Log.w("ImageProcessor", "Gemini API interrupted, using fallback");
+                    Thread.currentThread().interrupt();
+                }
+            } catch (Exception e) {
+                android.util.Log.w("ImageProcessor", "Error calling Gemini API, using fallback: " + e.getMessage());
+            }
+        }
+        
+        // Fallback to local narration
+        android.util.Log.d("ImageProcessor", "Using local narration");
+        return NarrationGenerator.generate(detections, textDetections);
     }
     
     private static Bitmap resizeBitmap(Bitmap bitmap, int maxDimension) {
@@ -117,4 +156,6 @@ public class ImageProcessor {
         return jsonArray.toString();
     }
 }
+
+
 

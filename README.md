@@ -72,6 +72,10 @@ The code loads them from assets:
 - ✅ Spatial awareness (left/center/right, near/mid/far)
 - ✅ Text-to-Speech narration
 - ✅ Accessible UI design
+- ✅ **Gemini API integration** (Optional - Extra Credit Feature)
+  - Enhanced natural-language narrations
+  - Automatic fallback to local narration
+  - See `GEMINI_SETUP.md` for setup instructions
 
 ## 🔧 Technical Stack
 

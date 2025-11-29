@@ -166,3 +166,6 @@ The interface adapts to different screen sizes:
 
 **Note**: These mockups represent the final implementation. The actual app follows these designs with Material Design components for consistency and accessibility.
 
+
+
+

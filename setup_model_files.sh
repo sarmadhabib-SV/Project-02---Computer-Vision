@@ -37,3 +37,6 @@ ls -lh app/src/main/assets/ 2>/dev/null || echo "Assets folder is empty"
 echo ""
 echo "✅ Setup complete! Ready to run in Android Studio."
 
+
+
+

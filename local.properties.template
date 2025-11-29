@@ -1,0 +1,14 @@
+## This file is a template for local.properties
+## Copy this file to local.properties and fill in your values
+## 
+## IMPORTANT: local.properties is in .gitignore and will NOT be committed to Git
+## This keeps your API keys secure
+
+# Android SDK location (required)
+sdk.dir=/path/to/your/Android/sdk
+
+# Gemini API Key (optional - app works without it)
+# Get your API key from: https://aistudio.google.com/app/apikey
+# Uncomment and add your key:
+# GEMINI_API_KEY=your_api_key_here
+

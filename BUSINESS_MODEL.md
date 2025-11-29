@@ -228,3 +228,6 @@ Vision Assist addresses a real need in the accessibility market with a clear val
 
 The business model is viable and scalable, with potential for significant impact on users' quality of life.
 
+
+
+
