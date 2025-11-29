@@ -132,9 +132,15 @@ The application follows a modular architecture with clear separation of concerns
 
 #### ObjectDetector.java
 - **Purpose**: TensorFlow Lite object detection
+- **Model**: EfficientDet-Lite0 trained on COCO 2017 dataset
+  - **Architecture**: EfficientNet-Lite0 backbone with BiFPN (Bidirectional Feature Pyramid Network) for multi-scale feature fusion
+  - **Training**: Combined Focal Loss (classification) + Smooth L1 Loss (bounding box regression)
+  - **Optimizer**: RMSProp with cosine learning-rate decay and warmup scheduling
+  - **Data Augmentation**: Random flipping, resizing, color jitter for outdoor sidewalk environments
+  - **Export**: Optimized to TFLite format with fused convolution layers and activation pruning
 - **Key Functions**:
-  - `loadModel()`: Loads EfficientDet model from assets
-  - `loadLabels()`: Loads COCO class labels
+  - `loadModel()`: Loads trained EfficientDet model from assets
+  - `loadLabels()`: Loads COCO class labels (80 classes)
   - `detect()`: Runs inference and parses results
   - `preprocessImage()`: Resizes and normalizes image
 
@@ -265,10 +271,10 @@ The application follows a modular architecture with clear separation of concerns
 
 ### 4.3 Future Improvements
 
-- Implement Gemini API integration for enhanced narration (extra credit)
+- ✅ Gemini API integration for enhanced narration (implemented - extra credit)
 - Add support for video stream processing
-- Fine-tune model for sidewalk-specific objects
-- Add cloud training documentation
+- Fine-tune model further with sidewalk-specific dataset for improved accuracy
+- Document cloud training process (extra credit D)
 - Support for additional hardware sensors (IR camera)
 
 ## Section 5: YouTube Video URL
@@ -288,6 +294,7 @@ The video should demonstrate:
 **Project Status**: Complete and ready for testing  
 **Last Updated**: [Current Date]  
 **Version**: 1.0
+
 
 
 
