@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 /**
  * Gemini API integration for enhanced narration.
- * This provides more natural, contextual narrations using Google's Gemini Pro Vision model.
+ * This provides more natural, contextual narrations using Google's Gemini 1.5 Flash model.
  * 
  * To use this feature:
  * 1. Get a Gemini API key from Google AI Studio: https://aistudio.google.com/app/apikey
@@ -35,7 +35,10 @@ import org.json.JSONObject;
  */
 public class GeminiHelper {
     private static final String TAG = "GeminiHelper";
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent";
+    // Using Gemini 1.5 Flash for multimodal (image + text) support
+    // Alternative: "gemini-1.5-pro" for higher quality (slower, more expensive)
+    // Note: Old model "gemini-pro-vision" is deprecated and no longer available
+    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final int TIMEOUT_SECONDS = 30;
     
