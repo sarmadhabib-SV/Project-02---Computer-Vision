@@ -35,10 +35,15 @@ import org.json.JSONObject;
  */
 public class GeminiHelper {
     private static final String TAG = "GeminiHelper";
-    // Using Gemini 1.5 Flash for multimodal (image + text) support
-    // Alternative: "gemini-1.5-pro" for higher quality (slower, more expensive)
-    // Note: Old model "gemini-pro-vision" is deprecated and no longer available
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+    // Gemini API endpoint - Using gemini-2.0-flash (doesn't use thinking tokens)
+    // Gemini 2.5 Flash uses thinking tokens that consume the entire output budget
+    // Switching to 2.0 Flash which should work better for short outputs
+    // Alternative: gemini-2.0-flash-lite (even lighter, faster)
+    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+    
+    // Alternative endpoints if primary fails (commented out - uncomment to try)
+    // private static final String GEMINI_API_URL_ALT1 = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent";
+    // private static final String GEMINI_API_URL_ALT2 = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent";
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private static final int TIMEOUT_SECONDS = 30;
     
@@ -94,28 +99,12 @@ public class GeminiHelper {
                     textSummary = "No text detected";
                 }
                 
-                // Create prompt - optimized for low-vision users per project requirements
+                // Create prompt - ultra-shortened to minimize token usage
+                // Gemini 2.5 Flash uses thinking tokens, so we need to keep prompt very concise
                 String prompt = String.format(
-                    "You are a friendly, supportive assistive technology narrator helping a low-vision or blind user navigate safely. " +
-                    "Your role is to provide clear, natural, and actionable guidance.\n\n" +
-                    "NARRATION REQUIREMENTS:\n" +
-                    "- Maximum 12 words (be concise)\n" +
-                    "- Action-first: Tell the user what to do, not just what exists\n" +
-                    "- Sidewalk-focused: Prioritize navigation and safety-relevant information\n" +
-                    "- Natural language: Use friendly, conversational phrasing (e.g., 'on your left' not 'left detected')\n" +
-                    "- Safety priority: Highlight immediate hazards first\n" +
-                    "- Clear spatial relationships: Use 'ahead', 'on your left/right', 'near you' for clarity\n" +
-                    "- Empathetic tone: Be supportive and helpful, like a trusted guide\n\n" +
-                    "CONTEXT:\n" +
-                    "Detected objects: %s\n" +
-                    "Detected text: %s\n\n" +
-                    "GENERATE a narration that:\n" +
-                    "1. Helps the user navigate safely\n" +
-                    "2. Uses friendly, natural language (e.g., 'Curb ahead; bench on your left')\n" +
-                    "3. Prioritizes immediate concerns and actionable guidance\n" +
-                    "4. Sounds like a helpful companion, not a robotic detector\n\n" +
-                    "Return ONLY the narration text (no JSON, no quotes, no explanations). " +
-                    "Keep it under 12 words, be natural and friendly, and focus on what matters most for safe navigation.",
+                    "Narrate for low-vision user (max 12 words). Action-first, safety-focused, natural language.\n" +
+                    "Objects: %s. Text: %s.\n" +
+                    "Return only narration text.",
                     detectionSummary.toString(),
                     textSummary
                 );
@@ -222,7 +211,9 @@ public class GeminiHelper {
             
             // Add generation config for better responses
             JSONObject generationConfig = new JSONObject();
-            generationConfig.put("maxOutputTokens", 100);
+            // Using gemini-2.0-flash which doesn't use thinking tokens
+            // Can set reasonable limit for 12-word narration output
+            generationConfig.put("maxOutputTokens", 100); // 100 tokens is plenty for 12-word narrations
             generationConfig.put("temperature", 0.4); // Lower temperature for more focused responses
             requestBody.put("generationConfig", generationConfig);
         } catch (org.json.JSONException e) {
@@ -256,6 +247,10 @@ public class GeminiHelper {
     
     private static String parseGeminiResponse(String response) throws IOException {
         try {
+            // Log response for debugging (first 500 chars to avoid spam)
+            String responsePreview = response.length() > 500 ? response.substring(0, 500) + "..." : response;
+            Log.d(TAG, "Parsing Gemini response (preview): " + responsePreview);
+            
             JSONObject json = new JSONObject(response);
             
             // Check for errors
@@ -267,24 +262,77 @@ public class GeminiHelper {
             
             // Extract candidates
             if (!json.has("candidates")) {
+                Log.e(TAG, "No candidates in response. Full response: " + response);
                 throw new IOException("No candidates in Gemini response");
             }
             
             JSONArray candidates = json.getJSONArray("candidates");
             if (candidates.length() == 0) {
+                Log.e(TAG, "Empty candidates array. Full response: " + response);
                 throw new IOException("Empty candidates array");
             }
             
             JSONObject candidate = candidates.getJSONObject(0);
+            
+            // Check for safety ratings first (might explain missing content)
+            if (candidate.has("safetyRatings")) {
+                Log.d(TAG, "Safety ratings: " + candidate.optJSONArray("safetyRatings").toString());
+            }
+            
+            // Check for finishReason (safety filters might block response)
+            if (candidate.has("finishReason")) {
+                String finishReason = candidate.optString("finishReason", "");
+                Log.d(TAG, "Finish reason: " + finishReason);
+                
+                // Handle MAX_TOKENS - response was truncated
+                if (finishReason.equals("MAX_TOKENS")) {
+                    Log.w(TAG, "Response truncated due to MAX_TOKENS limit. Content may be empty.");
+                    // Continue parsing - might have partial content
+                } else if (finishReason.equals("SAFETY") || finishReason.equals("RECITATION") || finishReason.equals("OTHER")) {
+                    throw new IOException("Response blocked or filtered. Finish reason: " + finishReason);
+                }
+            }
+            
+            // Get content - handle different possible structures
+            if (!candidate.has("content")) {
+                Log.e(TAG, "No content in candidate. Candidate keys: " + candidate.keys());
+                Log.e(TAG, "Full candidate: " + candidate.toString());
+                throw new IOException("No content in candidate - may be blocked by safety filters");
+            }
+            
             JSONObject content = candidate.getJSONObject("content");
+            
+            // Get parts - handle case where parts might not exist
+            if (!content.has("parts")) {
+                Log.e(TAG, "No parts in content. Content: " + content.toString());
+                Log.e(TAG, "Full response: " + response);
+                // Check if it's due to MAX_TOKENS truncation
+                if (candidate.has("finishReason") && candidate.optString("finishReason", "").equals("MAX_TOKENS")) {
+                    throw new IOException("Response truncated at token limit - no content generated. Try reducing prompt size or increasing maxOutputTokens.");
+                }
+                throw new IOException("No parts in candidate content - response may be empty or blocked");
+            }
+            
             JSONArray parts = content.getJSONArray("parts");
             
             if (parts.length() == 0) {
+                // Check if it's due to MAX_TOKENS truncation
+                if (candidate.has("finishReason") && candidate.optString("finishReason", "").equals("MAX_TOKENS")) {
+                    throw new IOException("Response truncated at token limit - no content in parts.");
+                }
                 throw new IOException("No parts in candidate content");
             }
             
+            // Get text from first part
             JSONObject part = parts.getJSONObject(0);
             String text = part.optString("text", "");
+            
+            // If no text field, try to get the entire part as string
+            if (text == null || text.trim().isEmpty()) {
+                // Try alternative: maybe the response structure is different
+                text = part.toString();
+                Log.w(TAG, "No text field found, using part as string: " + text);
+            }
             
             if (text == null || text.trim().isEmpty()) {
                 throw new IOException("Empty text in Gemini response");
@@ -294,6 +342,7 @@ public class GeminiHelper {
             
         } catch (org.json.JSONException e) {
             Log.e(TAG, "Error parsing Gemini response: " + e.getMessage(), e);
+            Log.e(TAG, "Response was: " + response);
             throw new IOException("Error parsing Gemini response: " + e.getMessage());
         }
     }
